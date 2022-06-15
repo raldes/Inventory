@@ -9,14 +9,6 @@ services:
     depends_on:
       - "rabbitmq"
 
-  inventory.itemsexpiration:
-    image: ${DOCKER_REGISTRY-}inventoryitemsexpiration
-    build:
-      context: .
-      dockerfile: inventory.itemsexpiration/Dockerfile
-    depends_on:
-      - "rabbitmq"
-
   rabbitmq: # login guest:guest
     image: rabbitmq:3-management
     hostname: "rabbitmq"
