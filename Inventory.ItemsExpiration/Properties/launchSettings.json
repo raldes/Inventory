@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Inventory.ItemsExpiration": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

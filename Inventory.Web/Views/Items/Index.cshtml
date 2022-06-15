@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Item";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<h2>Add a Item</h2>
+<div class="form-group" style="display:none;">
+    <input id="txtItemId" class="form-control" name="ItemId" />
+</div>
+<div class="form-group">
+    <label for="Name">Name : </label>
+    <input id="txtItemName" class="form-control" name="Name" />
+</div>
+<div class="form-group">
+    <label for="ItemTypes">Item Types : </label>
+    <select id="txtItemTypes" class="form-control">
+        <option value="default">Select a type</option>
+    </select>
+</div>
+<div class="form-group" style="display:none;">
+    <input id="txtItemTypeId" class="form-control" name="ItemTypeId" />
+</div>
+<div class="form-group">
+    <label for="Description">Description : </label>
+    <input id="txtItemDescription" class="form-control" name="Description" />
+</div>
+<div class="form-group">
+    <button id="btnSave" class="btn btn-sm btn-primary">Save</button>
+    <button id="btnAddNew" class="btn btn-sm btn-primary">Add New</button>
+</div>
+
+<br>
+
+<button onclick="GetAllItems()" class="btn btn-primary">Load Items</button>
+
+<h2>Item List</h2>
+<table id="tblItem" class="table table-sm table-striped table-bordered m-2">
+    <thead>
+        <tr>
+            <th>Item Id</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+
+    $.getJSON("/Items/GetAllItemTypes", function (result) {
+        var $dropdown = $('#txtItemTypes');
+        $.each(result, function() {
+            $dropdown.append($("<option />").val(this.itemTypeId).text(this.description));
+        });
+    });   
+
+    function GetAllItems() {
+        $.getJSON("/Items/GetAllItems", function (items) {
+            $("#tblItem tbody tr").remove();
+            $.map(items, function (item) {
+                $("#tblItem tbody").append("<tr>"
+                    + " <td>" + item.itemId + "</td>"
+                    + " <td>" + item.name + "</td>"
+                    + " <td>" + item.itemTypeId + "</td>"
+                    + " <td>" + item.description + "</td>"
+                    + " <td>"
+                    + "     <button class='btn-success' onclick='Edit(" + item.itemId + ")' style='margin-right:5px;'>Edit</button>"
+                    + "     <button class='btn-danger' onclick='Delete(" + item.itemId + ")'>Delete</button>"
+                    + " </td>"
+                    + " </tr>");
+            });
+        });
+    };
+
+    function Edit(itemId) {
+        $.getJSON("/Items/GetById?itemId=" + itemId, function (item) {
+            $("#txtItemId").val(item.itemId);
+            $("#txtItemName").val(item.name);
+            $("#txtItemTypes").val(item.itemTypeId);
+            $("#txtItemDescription").val(item.description);
+        });
+    };
+    function Delete(itemId) {
+        $.ajax({
+            url: '/Items/Delete?itemId=' + itemId,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function (data) {
+                GetAllItems();
+            },
+            error: function (ex) {
+                console.log("Error in Operation");
+            },
+        });
+    };
+
+    $("#btnSave").click(function () {
+        var oItem = {
+            ItemId: $("#txtItemId").val(),
+            Name: $("#txtItemName").val(),
+            ItemTypeId: $("#txtItemTypes").val(),
+            Description: $("#txtItemDescription").val()
+        };
+
+        $.post("/Items/AddUpdateItem/", oItem)
+            .done(function (data) {
+                GetAllItems();
+            });
+    });
+    $("#btnAddNew").click(function () {
+        $("#txtItemId").val("");
+        $("#txtItemName").val("");
+        $("#txtItemTypes").val(1),
+        $("#txtItemDescription").val("");
+    });
+</script>
