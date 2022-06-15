@@ -16,7 +16,6 @@ namespace Inventory.Api.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private readonly IItemsService _itemsService;
         private readonly IItemQueries _itemsQueries;
         private readonly IItemTypesService _itemTypesService;
         private readonly IMapper _mapper;
@@ -26,7 +25,6 @@ namespace Inventory.Api.Controllers
         public ItemsController(
             IMediator mediator,
             IItemQueries itemsQueries,
-            IItemsService itemsService,
             IItemTypesService itemTypesService,
             IMapper mapper,
             ILogger<ItemsController> logger
@@ -34,7 +32,6 @@ namespace Inventory.Api.Controllers
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _itemsQueries = itemsQueries ?? throw new ArgumentNullException(nameof(itemsQueries));
-            _itemsService = itemsService ?? throw new ArgumentNullException(nameof(itemsService));
             _itemTypesService = itemTypesService ?? throw new ArgumentNullException(nameof(itemTypesService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

@@ -137,8 +137,6 @@ void AddCustomIntegrations(IServiceCollection services, IConfiguration configura
 
     services.AddScoped<IItemTypesService, ItemTypesService>();
 
-    services.AddScoped<IItemsService, ItemsService>();
-
     services.AddScoped<IItemQueries, ItemQueries>();
 
     services.AddScoped(typeof(IEFRepository<>), typeof(EFRepository<>));

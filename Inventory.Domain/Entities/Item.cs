@@ -75,7 +75,7 @@ namespace Inventory.Domain.Entities
         {
             if (ExpirationDate <= compareDateTime)
             {
-                AddDomainEvent(new ItemExpiredDomainEvent(this));
+                SetStatusExpired();
             }
         }
 
@@ -84,6 +84,13 @@ namespace Inventory.Domain.Entities
             ItemStatusId = ItemStatus.FromName("Created").Id;
 
             AddItemCreatedDomainEvent(this.Name, this.Description, this.ExpirationDate, this.ItemTypeId);
+        }
+       
+        public void SetStatusExpired()
+        {
+            ItemStatusId = ItemStatus.FromName("Expired").Id;
+
+            AddItemExpiredDomainEvent(this);
         }
        
         private void SetStatusDraft()
@@ -124,6 +131,13 @@ namespace Inventory.Domain.Entities
             var itemUpdatedDomainEvent = new ItemUpdatedDomainEvent(item);
 
             this.AddDomainEvent(itemUpdatedDomainEvent);
+        }
+        
+        private void AddItemExpiredDomainEvent(Item item)
+        {
+            var itemExpiredDomainEvent = new ItemExpiredDomainEvent(item);
+
+            this.AddDomainEvent(itemExpiredDomainEvent);
         }    
     }
 }
