@@ -62,7 +62,7 @@ We have two entities: Item and ItemType.
 
 - Entity Framework Core In Memmory.
 
-- Oths.EventBus.RabbitMQ (myself). Publish and subscribe integration events.
+- Oths.EventBus.RabbitMQ (my own). Publish and subscribe integration events.
 
 - xUnit for unit testing.
 
