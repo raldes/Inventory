@@ -17,6 +17,7 @@ using RabbitMQ.Client;
 using Inventory.Api.Controllers;
 using Autofac.Extensions.DependencyInjection;
 using Inventory.App.Queries;
+using Inventory.App.Validation;
 
 var configuration = GetConfiguration();
 
@@ -134,6 +135,10 @@ void AddCustomIntegrations(IServiceCollection services, IConfiguration configura
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.AddTransient<IInventoryIntegrationEventService, InventoryIntegrationEventService>();
+
+    services.AddScoped<IItemValidationService, ItemValidationService>();
+
+    services.AddScoped<IItemValidationRules, ItemValidationRules>();
 
     services.AddScoped<IItemTypesService, ItemTypesService>();
 

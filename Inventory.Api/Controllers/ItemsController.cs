@@ -9,6 +9,7 @@ using Inventory.App.Commands;
 using MediatR;
 using Inventory.App.Queries;
 using System.Linq.Expressions;
+using Inventory.App.Validation;
 
 namespace Inventory.Api.Controllers
 {
@@ -21,13 +22,15 @@ namespace Inventory.Api.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<ItemsController> _logger;
         private readonly IMediator _mediator;
+        private readonly IItemValidationService _itemValidationService;
 
         public ItemsController(
             IMediator mediator,
             IItemQueries itemsQueries,
             IItemTypesService itemTypesService,
             IMapper mapper,
-            ILogger<ItemsController> logger
+            ILogger<ItemsController> logger,
+            IItemValidationService itemValidationService
             )
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
@@ -35,6 +38,7 @@ namespace Inventory.Api.Controllers
             _itemTypesService = itemTypesService ?? throw new ArgumentNullException(nameof(itemTypesService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _itemValidationService = itemValidationService ?? throw new ArgumentNullException(nameof(itemValidationService));
         }
 
 
@@ -80,20 +84,13 @@ namespace Inventory.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CreateAsync([FromBody] CreateItemCommand createItemCommand)
         {
-            if (!ModelState.IsValid)
+            var validationResult = _itemValidationService.Validate(createItemCommand);
+
+            if(!string.IsNullOrEmpty(validationResult))
             {
-                return BadRequest(ModelState);
+                return BadRequest(validationResult);
             }
-
-            var entityType = await _itemTypesService.GetAsync(createItemCommand.ItemTypeId);
-
-            if (entityType == null)
-            {
-                var error = $"ItemType with Id = {createItemCommand.ItemTypeId} do not exists";
-
-                return BadRequest(error);
-            }
-
+ 
              _logger.LogInformation($"Creating item. Name: {createItemCommand.Name}, TypeId: {createItemCommand.ItemTypeId}");
 
             var dto =  await _mediator.Send(createItemCommand);
